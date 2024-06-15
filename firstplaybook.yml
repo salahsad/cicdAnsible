@@ -1,0 +1,25 @@
+---
+- hosts: all
+  tasks:
+    - name: copy docker file 
+      copy: 
+        src: Dockerfile
+        dest: .
+    - name: copy webapp.war
+      copy:
+        src: webapp.war
+        dest: .      
+    - name: stop the runing container
+      command: docker stop customcontainer
+      ignore_errors: true
+    - name: remove the runing container
+      command: docker rm customcontainer
+      ignore_errors: true
+    - name: remove the image
+      command: docker rmi tomcat-image
+      ignore_errors: true  
+    - name: build image
+      command: docker build -t tomcat-image .  
+    - name: create and run container
+      command: docker run -d -p 8090:8080 --name customcontainer tomcat-image
+
